@@ -2,7 +2,6 @@
 
 A basic Ruby Wrapper for interacting programatically with YQL API.
 
-I started working on this library during ScienceHackDay held at Guardian, London on 19/06/2010-20/06/2010
 
 ==TODO
 

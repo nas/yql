@@ -35,10 +35,7 @@ module Yql
       http = Net::HTTP.new(BASE_URL, Net::HTTP.https_default_port)
       http.use_ssl = true
       path = "/#{version}/#{URL_SUFFIX}"
-      result = http.post(path, parameters)
-      #raise(Yql::ResponseFailure, result.response) unless result.code == '200'
-      return result.body unless format == 'xml'
-      REXML::Document.new(result.body)
+      Yql::Response.new(http.post(path, parameters), format)
     end
     
     def parameters

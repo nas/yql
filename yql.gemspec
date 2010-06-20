@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = %q{yql}
-  s.version = "0.0.1"
+  s.version = "0.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Nasir Jamal"]
@@ -12,8 +12,9 @@ Gem::Specification.new do |s|
              "Manifest.txt",
              "README.rdoc",
              "lib/yql.rb",
-             "lib/yql/client.rb",
              "lib/yql/error.rb",
+             "lib/yql/response.rb",
+             "lib/yql/client.rb",
              "lib/yql/query_builder.rb",
              ]
   s.has_rdoc = true

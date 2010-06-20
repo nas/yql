@@ -1,4 +1,9 @@
-=== 0.1.1 2010-06-20
+=== 0.0.1 2010-06-20
 
 * 1 major enhancement:
   * Initial release
+
+=== 0.0.2 2010-06-20
+
+* 1 bug fix:
+  * Fix CGI require directive that was giving Superclass cookie error when using with rails

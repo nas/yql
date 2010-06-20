@@ -1,0 +1,7 @@
+History.txt
+Manifest.txt
+README.rdoc
+lib/yql.rb
+lib/yql/client.rb
+lib/yql/error.rb
+lib/yql/query_builder.rb

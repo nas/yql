@@ -1,0 +1,104 @@
+==DESCRIPTION
+
+A basic Ruby Wrapper for interacting programatically with YQL API.
+
+I started working on this library during ScienceHackDay held at Guardian, London on 19/06/2010-20/06/2010
+
+==TODO
+
+1. Add Unit Tests
+2. Add oauth
+3. Add table creation
+4. Add update / insert / delete operations
+
+==INSTALLATION
+
+sudo gem source --add http://rubygems.org
+
+sudo gem install yql
+
+
+==USAGE
+
+require 'rubygems'
+
+require 'yql'
+
+===Building Query
+
+
+====Finders
+
+yql = Yql::Client.new
+
+query = Yql::QueryBuilder.new 'yelp.review.search'
+
+query.to_s #=> "select * from yelp.review.search"
+
+query.find #=> "select * from yelp.review.search limit 1" 
+
+query.limit = 4
+
+query.to_s #=> "select * from yelp.review.search limit 4"
+
+query.find_all #=> "select * from yelp.review.search"
+
+
+====Conditions
+
+query.conditions = "term like '%pizza%'"
+
+query.to_s #=> "select * from yelp.review.search where term='%pizza%'"
+
+query.conditions = {:term => 'pizza'}
+
+query.to_s #=> "select * from yelp.review.search where term = 'pizza'"
+
+query.conditions = {:term => 'pizza', :location => 'london', 'ywsid' => '6L0Lc-yn1OKMkCKeXLD4lg'}
+
+query.to_s #=> "select * from yelp.review.search where term='pizza' and location='london' and ywsid= '6L0Lc-yn1OKMkCKeXLD4lg'"
+
+query.select = 'user_photo_url, state'
+
+yql.query = query
+result = yql.get
+
+yql.format = 'json'
+result = yql.get
+
+
+===Piped Filters
+
+query.unique = 'name'
+
+query.to_s #=> "select title, Rating, LastReviewIntro from yelp.review.search where ywsid='6L0Lc-yn1OKMkCKeXLD4lg' and term='pizza' and location='london' | unique(field='name')"
+
+query.tail  = 4
+
+query.to_s #=> "select title, Rating, LastReviewIntro from yelp.review.search where ywsid='6L0Lc-yn1OKMkCKeXLD4lg' and term='pizza' and location='london' | unique(field='name') | tail(count=4)"
+
+query.reorder_pipe_command :from => 1, :to => 0
+
+query.to_s #=> "select title, Rating, LastReviewIntro from yelp.review.search where ywsid='6L0Lc-yn1OKMkCKeXLD4lg' and term='pizza' and location='london' | tail(count=4) | unique(field='name')"
+
+yql.format = 'json'
+result = yql.get
+
+
+====Pagination
+
+query.per_page = 10
+query.current_page = 1
+
+yql.query = query
+result = yql.get
+
+
+===Describe and show tables
+
+query = Yql::QueryBuilder.describe_table('yelp.review.search')
+
+query = Yql::QueryBuilder.show_tables
+
+yql.query = query
+result = yql.get

@@ -30,6 +30,8 @@ require 'yql'
 
 yql = Yql::Client.new
 
+* Query builder takes table as mandatory parameter.
+
 query = Yql::QueryBuilder.new 'yelp.review.search'
 
 query.to_s #=> "select * from yelp.review.search"
@@ -45,13 +47,11 @@ query.find_all #=> "select * from yelp.review.search"
 
 ====Conditions
 
+* Conditions for a query can be either provided as a string or a hash just like rails
+
 query.conditions = "term like '%pizza%'"
 
 query.to_s #=> "select * from yelp.review.search where term='%pizza%'"
-
-query.conditions = {:term => 'pizza'}
-
-query.to_s #=> "select * from yelp.review.search where term = 'pizza'"
 
 query.conditions = {:term => 'pizza', :location => 'london', 'ywsid' => '6L0Lc-yn1OKMkCKeXLD4lg'}
 
@@ -60,10 +60,20 @@ query.to_s #=> "select * from yelp.review.search where term='pizza' and location
 query.select = 'user_photo_url, state'
 
 yql.query = query
+
 response = yql.get
 
+* the above method call will give an xml output, set the yql client format to json like so
+
 yql.format = 'json'
+
 response = yql.get #=> Yql::Response object
+
+response.show
+
+* to print the xml output on console
+
+response.show.to_s
 
 
 ===Piped Filters
@@ -81,25 +91,37 @@ query.reorder_pipe_command :from => 1, :to => 0
 query.to_s #=> "select title, Rating, LastReviewIntro from yelp.review.search where ywsid='6L0Lc-yn1OKMkCKeXLD4lg' and term='pizza' and location='london' | tail(count=4) | unique(field='name')"
 
 yql.format = 'json'
+
 response = yql.get #=> Yql::Response object
+
+* to print the xml output on console
+
+response.show.to_s
 
 
 ====Pagination
 
 query.per_page = 10
+
 query.current_page = 1
 
 yql.query = query
+
 response = yql.get #=> Yql::Response object
 
 
 ===Describe and show tables
 
+* To describe a table and see its required parameters, etc.
+
 query = Yql::QueryBuilder.describe_table('yelp.review.search')
+
+* To see all the table sources and their names in YQL
 
 query = Yql::QueryBuilder.show_tables
 
 yql.query = query
+
 response = yql.get #=> Yql::Response object
 
 response.show

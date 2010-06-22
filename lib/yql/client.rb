@@ -24,8 +24,8 @@ module Yql
       @version ||= VERSION
     end
     
-    def full_url
-      "#{version}/#{URL_SUFFIX}"
+    def path_without_domain
+      "/#{version}/#{URL_SUFFIX}"
     end
     
     def get
@@ -34,8 +34,7 @@ module Yql
       end
       http = Net::HTTP.new(BASE_URL, Net::HTTP.https_default_port)
       http.use_ssl = true
-      path = "/#{version}/#{URL_SUFFIX}"
-      Yql::Response.new(http.post(path, parameters), format)
+      Yql::Response.new(http.post(path_without_domain, parameters), format)
     end
     
     def parameters

@@ -2,6 +2,10 @@
 
 A basic Ruby Wrapper for interacting programatically with YQL API.
 
+The idea for this library came while attending the world's first Sciencehackday (@sciencehackday) in London - http://www.guardian.co.uk/open-platform/blog/science-hack-day-at-the-guardian. 
+
+Most of the people during science hack day were using YQL to fetch or post their data and some were using rails, so I thought it would be cool to have a ruby library that can provide interface to YQL to do a bunch of things programatically. And I ended up hacking together and releasing version 0.0.1 and 0.0.2 during the event.
+
 
 ==TODO
 

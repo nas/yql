@@ -8,20 +8,17 @@ module Yql
     YQL_ENV    = 'http://datatables.org/alltables.env'
     
     attr_accessor :query, :diagnostics, :format
+    attr_reader   :version
     
     def initialize(args={})
-      @diagnostics = args[:diagnostics] #true or false
-      @version = args[:version]
-      @query = args[:query]
-      @format = args[:format] || 'xml'
+      @diagnostics = args[:diagnostics] || false
+      @version     = args[:version]     || VERSION
+      @format      = args[:format]      || 'xml'
+      @query       = args[:query]
     end
     
     def query
       @query.kind_of?(Yql::QueryBuilder) ? @query.to_s : @query
-    end
-    
-    def version
-      @version ||= VERSION
     end
     
     def path_without_domain

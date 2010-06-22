@@ -17,13 +17,17 @@ describe Yql::Client do
       it "should have the api version set to 'v1' by default" do
         @yql_client.version.should eql('v1')
       end
+      
+      it "should have the diagnostics turned off" do
+        @yql_client.diagnostics.should be_false
+      end
 
     end
 
     context "when arguments provided" do
 
       before(:each) do
-        @yql_client = Yql::Client.new(:format => 'json', :version => 'v2')
+        @yql_client = Yql::Client.new(:format => 'json', :version => 'v2', :diagnostics => true)
       end
 
       it "should set the format" do
@@ -32,6 +36,10 @@ describe Yql::Client do
 
       it "should set the api version" do
         @yql_client.version.should eql('v2')
+      end
+      
+      it "should have the diagnostics turned on" do
+        @yql_client.diagnostics.should be_true
       end
 
     end

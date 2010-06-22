@@ -11,8 +11,8 @@ Most of the people during science hack day were using YQL to fetch or post their
 
 1. Add Unit Tests
 2. Add oauth
-3. Add table creation
-4. Add update / insert / delete operations
+3. Add YQL table creation
+4. Add YQL update / insert / delete operations
 
 ==INSTALLATION
 
@@ -27,12 +27,13 @@ require 'rubygems'
 
 require 'yql'
 
-===Building Query
+===Building Query and connecting to YQL
 
-
-====Finders
+====Initialize Client
 
 yql = Yql::Client.new
+
+====Finders
 
 * Query builder takes table as mandatory parameter.
 

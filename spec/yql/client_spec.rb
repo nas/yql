@@ -17,7 +17,7 @@ describe Yql::Client do
       it "should have the api version set to 'v1' by default" do
         @yql_client.version.should eql('v1')
       end
-      
+
       it "should have the diagnostics turned off" do
         @yql_client.diagnostics.should be_false
       end
@@ -37,7 +37,7 @@ describe Yql::Client do
       it "should set the api version" do
         @yql_client.version.should eql('v2')
       end
-      
+
       it "should have the diagnostics turned on" do
         @yql_client.diagnostics.should be_true
       end
@@ -139,5 +139,81 @@ describe Yql::Client do
       end
 
     end
+
   end
+
+  describe "#get" do
+
+    before(:each) do
+      @yql_client = Yql::Client.new
+    end
+
+    context "when query attribute is not set" do
+
+      it "should raise error" do
+        lambda { @yql_client.get }.should raise_error(Yql::IncompleteRequestParameter, "You must set the query attribute for the Yql::Client object before sending the request")
+      end
+
+    end
+
+    context "when query attribute is set" do
+
+      before(:each) do
+        @yql_client.query = "addquery"
+        @net_http = stub(:use_ssl= => true, :post => 'response')
+        Net::HTTP.stub!(:new).and_return(@net_http)
+        @response_object = stub
+        Yql::Response.stub!(:new).and_return(@response_object)
+      end
+
+      it "should create a new http object for connecting to yahoo YQL" do
+        Net::HTTP.should_receive(:new).with('query.yahooapis.com', Net::HTTP.https_default_port).and_return(@net_http)
+        @yql_client.get
+      end
+
+      it "should set the ssl for http object" do
+        @net_http.should_receive(:use_ssl=).with(true)
+        @yql_client.get
+      end
+
+      it "should return the response object" do
+        @yql_client.get.should eql(@response_object)
+      end
+
+      context "and format is set to default ie, xml" do
+
+        it "should send the request to get data" do
+          @net_http.should_receive(:post).with('/v1/public/yql', 'q=addquery&env=http://datatables.org/alltables.env&format=xml')
+          @yql_client.get
+        end
+
+        it "should create the response object" do
+          Yql::Response.should_receive(:new).with('response', 'xml')
+          @yql_client.get
+        end
+
+      end
+
+      context "and format is set to json" do
+
+        before(:each) do
+          @yql_client.format = 'json'
+        end
+
+        it "should send the request to get data" do
+          @net_http.should_receive(:post).with('/v1/public/yql', 'q=addquery&env=http://datatables.org/alltables.env&format=json')
+          @yql_client.get
+        end
+
+        it "should create the response object" do
+          Yql::Response.should_receive(:new).with('response', 'json')
+          @yql_client.get
+        end
+
+      end
+
+    end
+
+  end
+
 end

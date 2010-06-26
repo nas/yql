@@ -24,8 +24,6 @@ module Yql
       code == '200'
     end
     
-    private
-    
     def output
       return body unless @format == 'xml'
       REXML::Document.new(body)

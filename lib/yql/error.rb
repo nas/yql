@@ -13,6 +13,9 @@ module Yql
   class NoResult < Error
   end
   
+  class InvalidRequestFormat < Error
+  end
+
   class IncompleteRequestParameter < Error
   end
   

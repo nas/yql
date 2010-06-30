@@ -44,66 +44,75 @@ describe Yql::Client do
 
     end
 
-    describe "#query" do
+    context "when wrong format provided in the argument" do
+
+      it "should raise error" do
+        lambda { Yql::Client.new(:format => 'invalid format') }.should raise_error(Yql::InvalidRequestFormat, 'Only json or xml formats are allowed')
+      end
+
+    end
+
+  end
+
+  describe "#query" do
+
+    before(:each) do
+      @yql_client = Yql::Client.new
+    end
+
+    context "when query is set to a string query" do
+
+      before(:each) do
+        @yql_client.query = "select * from yelp.review.search where term = 'something' and location like '%london%'"
+      end
+
+      it "should return the query string provided" do
+        @yql_client.query.should eql("select * from yelp.review.search where term = 'something' and location like '%london%'")
+      end
+
+    end
+
+    context "when query is set to the query builder object" do
+
+      before(:each) do
+        @query = Yql::QueryBuilder.new('yql.table.name')
+        @yql_client.query = @query
+      end
+
+      it "should build and return the query from the query builder object" do
+        @yql_client.query.should eql("select * from yql.table.name")
+      end
+
+    end
+
+  end
+
+  describe "#version" do
+
+    context "when version not provided on class initialization" do
 
       before(:each) do
         @yql_client = Yql::Client.new
       end
 
-      context "when query is set to a string query" do
 
-        before(:each) do
-          @yql_client.query = "select * from yelp.review.search where term = 'something' and location like '%london%'"
-        end
-
-        it "should return the query string provided" do
-          @yql_client.query.should eql("select * from yelp.review.search where term = 'something' and location like '%london%'")
-        end
-
-      end
-
-      context "when query is set to the query builder object" do
-
-        before(:each) do
-          @query = Yql::QueryBuilder.new('yql.table.name')
-          @yql_client.query = @query
-        end
-
-        it "should build and return the query from the query builder object" do
-          @yql_client.query.should eql("select * from yql.table.name")
-        end
-
+      it "should return the default version" do
+        @yql_client.version.should eql('v1')
       end
 
     end
 
-    describe "#version" do
+    context "when version provided on class initialization" do
 
-      context "when version not provided on class initialization" do
-
-        before(:each) do
-          @yql_client = Yql::Client.new
-        end
-
-
-        it "should return the default version" do
-          @yql_client.version.should eql('v1')
-        end
-
+      before(:each) do
+        @yql_client = Yql::Client.new(:version => 'v4')
       end
 
-      context "when version provided on class initialization" do
 
-        before(:each) do
-          @yql_client = Yql::Client.new(:version => 'v4')
-        end
-
-
-        it "should return the default version" do
-          @yql_client.version.should eql('v4')
-        end
-
+      it "should return the default version" do
+        @yql_client.version.should eql('v4')
       end
+
     end
 
   end
@@ -210,6 +219,56 @@ describe Yql::Client do
           @yql_client.get
         end
 
+      end
+
+    end
+
+  end
+
+  describe "#valid_format?" do
+
+    before(:each) do
+      @yql_client = Yql::Client.new
+    end
+
+    it "should not be valid when format is neither xml nor json" do
+      @yql_client.should_not be_valid_format("pdf")
+    end
+
+    it "should be valid when format is xml" do
+      @yql_client.should be_valid_format("xml")
+    end
+
+    it "should be valid when format is json" do
+      @yql_client.should be_valid_format("json")
+    end
+
+  end
+
+  describe "#format=" do
+
+    before(:each) do
+      @yql_client = Yql::Client.new
+    end
+
+    context "when valid format" do
+
+      it "should set the format" do
+        @yql_client.format = 'json'
+        @yql_client.format.should eql('json')
+      end
+
+      it "should set the format" do
+        @yql_client.format = 'xml'
+        @yql_client.format.should eql('xml')
+      end
+
+    end
+
+    context "when invalid format" do
+
+      it "should raise the error" do
+        lambda { @yql_client.format = 'pdf' }.should raise_error(Yql::InvalidRequestFormat, 'Only json or xml formats are allowed')
       end
 
     end

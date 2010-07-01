@@ -66,14 +66,39 @@ describe Yql::QueryBuilder do
       @query_builder.stub!(:construct_query).and_return('The yql query')
     end
 
-    it "should set the limit of records to nil" do
-      @query_builder.should_receive(:limit=).with(nil)
-      @query_builder.find_all
+    context "when parameter hash has limit key" do
+
+      it "should set the limit with provided value" do
+        @query_builder.should_receive(:limit=).with(10)
+        @query_builder.find_all({:limit => 10})
+      end
+
+      it "should set attr reader limit with value 10" do
+        @query_builder.find_all({:limit => 10})
+        @query_builder.limit.should eql('limit 10')
+      end
+
     end
 
-    it "should set the with provided hash" do
-      @query_builder.should_receive(:limit=).with(10)
-      @query_builder.find_all({:limit => 10})
+    context "when parameter hash does not have limit key" do
+
+      it "should set the limit of records to nil" do
+        @query_builder.should_receive(:limit=).with(nil)
+        @query_builder.find_all
+      end
+
+      it "should set attr reader limit to nil" do
+        @query_builder.find_all
+        @query_builder.limit.should be_nil
+      end
+
+      it "should set attr reader limit to nil even if it was set previously" do
+        @query_builder.limit = 20
+        @query_builder.limit.should eql('limit 20')
+        @query_builder.find_all
+        @query_builder.limit.should be_nil
+      end
+
     end
 
     it "should construct the query" do

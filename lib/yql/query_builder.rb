@@ -43,7 +43,8 @@ module Yql
     # Can be optionally passed a limit for limiting the number of records returned
     # object.find_all(:limit => 10)
     #     #=> will return only 10 records
-    #
+    # object.find_all
+    #     #=> will return all records
     def find_all(args = {})
       self.limit = args[:limit] || nil
       construct_query

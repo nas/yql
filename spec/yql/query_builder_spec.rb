@@ -197,4 +197,268 @@ describe Yql::QueryBuilder do
 
   end
 
+  describe "#tail" do
+
+    before(:each) do
+      @query_builder = Yql::QueryBuilder.new('yql.table.name')
+    end
+
+    context "when tail pipe command is not set" do
+
+      it "should return nothing" do
+        @query_builder.tail.should be_nil
+      end
+
+      it "should not be present in the current pipe commands" do
+        @query_builder.current_pipe_command_types.should_not be_include('tail')
+      end
+
+    end
+
+    context "when tail pipe command is set" do
+
+      before(:each) do
+        @query_builder.tail = 4
+      end
+
+      it "should set the tail pipe command" do
+        @query_builder.tail.should eql("tail(count=4)")
+      end
+
+      it "should get added to the current pipe commands" do
+        @query_builder.current_pipe_command_types.should be_include('tail')
+      end
+
+    end
+
+  end
+
+  describe "#truncate" do
+
+    before(:each) do
+      @query_builder = Yql::QueryBuilder.new('yql.table.name')
+    end
+
+    context "when truncate pipe command is not set" do
+
+      it "should return nothing" do
+        @query_builder.truncate.should be_nil
+      end
+
+      it "should not be present in the current pipe commands" do
+        @query_builder.current_pipe_command_types.should_not be_include('truncate')
+      end
+
+    end
+
+    context "when truncate pipe command is set" do
+
+      before(:each) do
+        @query_builder.truncate = 4
+      end
+
+      it "should set the truncate pipe command" do
+        @query_builder.truncate.should eql("truncate(count=4)")
+      end
+
+      it "should get added to the current pipe commands" do
+        @query_builder.current_pipe_command_types.should be_include('truncate')
+      end
+
+    end
+
+  end
+
+  describe "#reverse" do
+
+    before(:each) do
+      @query_builder = Yql::QueryBuilder.new('yql.table.name')
+    end
+
+    context "when reverse pipe command is not set" do
+
+      it "should return nothing" do
+        @query_builder.reverse.should be_nil
+      end
+
+      it "should not be present in the current pipe commands" do
+        @query_builder.current_pipe_command_types.should_not be_include('reverse')
+      end
+
+    end
+
+    context "when reverse pipe command is set" do
+
+      before(:each) do
+        @query_builder.reverse = true
+      end
+
+      it "should set the reverse pipe command" do
+        @query_builder.reverse.should eql('reverse()')
+      end
+
+      it "should get added to the current pipe commands" do
+        @query_builder.current_pipe_command_types.should be_include('reverse')
+      end
+
+    end
+
+  end
+
+  describe "#unique" do
+
+    before(:each) do
+      @query_builder = Yql::QueryBuilder.new('yql.table.name')
+    end
+
+    context "when unique pipe command is not set" do
+
+      it "should return nothing" do
+        @query_builder.unique.should be_nil
+      end
+
+      it "should not be present in the current pipe commands" do
+        @query_builder.current_pipe_command_types.should_not be_include('unique')
+      end
+
+    end
+
+    context "when unique pipe command is set" do
+
+      before(:each) do
+        @query_builder.unique = 'field_name'
+      end
+
+      it "should set the unique pipe command" do
+        @query_builder.unique.should eql("unique(field='field_name')")
+      end
+
+      it "should get added to the current pipe commands" do
+        @query_builder.current_pipe_command_types.should be_include('unique')
+      end
+
+    end
+
+  end
+
+  describe "#sort" do
+
+    before(:each) do
+      @query_builder = Yql::QueryBuilder.new('yql.table.name')
+    end
+
+    context "when sort field is not set" do
+
+      it "should return nothing" do
+        @query_builder.sort.should be_nil
+      end
+
+      it "should not be present in the current pipe commands" do
+        @query_builder.current_pipe_command_types.should_not be_include('sort')
+      end
+
+    end
+
+    context "when sort field pipe command is set" do
+
+      before(:each) do
+        @query_builder.sort_field = 'field_name'
+      end
+
+      context "when sort descending is not set" do
+        it "should set the unique pipe command" do
+          @query_builder.sort.should eql("sort(field='field_name')")
+        end
+      end
+
+      context "when sort descending is set" do
+        it "should set the unique pipe command" do
+          @query_builder.sort_descending = true
+          @query_builder.sort.should eql("sort(field='field_name', descending='true')")
+        end
+      end
+
+      it "should get added to the current pipe commands" do
+        @query_builder.current_pipe_command_types.should be_include('sort')
+      end
+
+    end
+
+  end
+
+  describe "#sanitize" do
+
+    before(:each) do
+      @query_builder = Yql::QueryBuilder.new('yql.table.name')
+    end
+
+    context "when sanitize field is not set" do
+
+      it "should return nothing" do
+        @query_builder.sanitize.should be_nil
+      end
+
+      it "should not be present in the current pipe commands" do
+        @query_builder.current_pipe_command_types.should_not be_include('sanitize')
+      end
+
+    end
+
+    context "when sanitize pipe command is set" do
+
+      context "and it is set to true" do
+
+        before(:each) do
+          @query_builder.sanitize = true
+        end
+
+        it "should set the sanitizie pipe command" do
+          @query_builder.sanitize.should eql("sanitize()")
+        end
+
+        it "should get added to the current pipe commands" do
+          @query_builder.current_pipe_command_types.should be_include('sanitize')
+        end
+
+      end
+
+      context "when sanitize_field is set" do
+
+         before(:each) do
+            @query_builder.sanitize_field = 'field_name'
+          end
+
+        it "should set the sanitize pipe command" do
+          @query_builder.sanitize.should eql("sanitize(field='field_name')")
+        end
+
+        it "should get added to the current pipe commands" do
+          @query_builder.current_pipe_command_types.should be_include('sanitize')
+        end
+
+      end
+
+    end
+
+  end
+
+  describe "#remove_pipe_command" do
+
+    before(:each) do
+      @query_builder = Yql::QueryBuilder.new('yql.table.name')
+      @query_builder.stub!(:current_pipe_command_types).and_return(['sort', 'sanitize', 'truncate'])
+    end
+
+    it "should remove the pipe command that is not present" do
+      @query_builder.remove_pipe_command('not_present')
+      @query_builder.current_pipe_command_types.should eql(['sort', 'sanitize', 'truncate'])
+    end
+
+    it "should remove the pipe command that is present" do
+      @query_builder.remove_pipe_command('sort')
+      @query_builder.current_pipe_command_types.should eql(['sanitize', 'truncate'])
+    end
+
+  end
+
 end

@@ -2,9 +2,10 @@ module Yql
 
   class QueryBuilder
 
-    attr_accessor :table, :conditions, :limit, :truncate, :sanitize_field, :select,
-                  :sort_field, :current_pipe_command_types, :sort_descending,
-                  :per_page, :current_page
+    attr_accessor :table, :conditions, :limit, :select, :sort_descending,
+                  :current_pipe_command_types, :per_page, :current_page
+
+    attr_reader   :sort_field, :sanitize_field
 
     def initialize(table, args = {})
       @select                     = args[:select]
@@ -39,7 +40,7 @@ module Yql
       self.limit = 1
       "#{construct_query}"
     end
-    
+
     # Can be optionally passed a limit for limiting the number of records returned
     # object.find_all(:limit => 10)
     #     #=> will return only 10 records
@@ -75,19 +76,12 @@ module Yql
       return "where #{cond}"
     end
 
-    %w{sort tail truncate reverse unique sanitize}.each do |method|
+    %w{sort_field tail truncate reverse unique sanitize_field}.each do |method|
       self.send(:define_method, "#{method}=") do |param|
         instance_variable_set("@#{method}", param)
-        current_pipe_command_types << method  unless current_pipe_command_types.include?(method)
+        pipe_command_type = method.sub('_field', '')
+        current_pipe_command_types << pipe_command_type  unless current_pipe_command_types.include?(pipe_command_type)
       end
-    end
-
-    # Option can be piped
-    # Sorts the result set according to the specified field (column) in the result set.
-    def sort
-      return unless @sort_field
-      return "sort(field='#{@sort_field}')" unless @sort_descending
-      return "sort(field='#{@sort_field}', descending='true')"
     end
 
     # Option can be piped
@@ -118,12 +112,31 @@ module Yql
       "unique(field='#{@unique}')"
     end
 
+    # set sanitize to true if you want to sanitize all fields
+    def sanitize=(sanitize)
+      @sanitize       = sanitize
+      @sanitize_field = nil
+      if @sanitize
+        current_pipe_command_types << 'sanitize'  unless current_pipe_command_types.include?('sanitize')
+      else
+        remove_pipe_command('sanitize')
+      end
+    end
+
     # Option can be piped
     # Sanitizes the output for HTML-safe rendering. To sanitize all returned fields, omit the field parameter.
     def sanitize
-      return unless @sanitize
+      return unless @sanitize || @sanitize_field
       return "sanitize()" unless @sanitize_field
       "sanitize(field='#{@sanitize_field}')"
+    end
+
+    # Option can be piped
+    # Sorts the result set according to the specified field (column) in the result set.
+    def sort
+      return unless @sort_field
+      return "sort(field='#{@sort_field}')" unless @sort_descending
+      return "sort(field='#{@sort_field}', descending='true')"
     end
 
     # Its always advisable to order the pipe when there are more than one

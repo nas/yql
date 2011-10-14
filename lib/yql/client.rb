@@ -15,6 +15,7 @@ module Yql
       @version     = args[:version]     || VERSION
       @format      = args[:format]      || 'xml'
       @query       = args[:query]
+      @verify_ssl  = args[:verify_ssl]  || true
       raise_when_invalid_format(format)
     end
 
@@ -37,6 +38,7 @@ module Yql
       end
       http = Net::HTTP.new(BASE_URL, Net::HTTP.https_default_port)
       http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE unless @verify_ssl
       Yql::Response.new(http.post(path_without_domain, parameters), format)
     end
 

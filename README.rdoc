@@ -33,6 +33,12 @@ require 'yql'
 
 yql = Yql::Client.new
 
+====Use OAuth
+
+yql.consumer_key = 'Your app key'
+
+yql.consumer_secret = 'Your app secret'
+
 ====Finders
 
 * Query builder takes table as mandatory parameter.

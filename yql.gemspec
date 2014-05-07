@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
              "lib/yql/client.rb",
              "lib/yql/query_builder.rb",
              ]
-  s.has_rdoc = true
+  #s.has_rdoc = true
   s.homepage = %q{http://github.com/nas/yql}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]

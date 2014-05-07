@@ -10,3 +10,5 @@ require 'yql/error.rb'
 require 'yql/query_builder.rb'
 require 'yql/response.rb'
 require 'yql/client.rb'
+require 'oauth'
+
